@@ -1,0 +1,57 @@
+name: Deploy Ticket System
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ticketing-system/**"
+      - ".github/workflows/deploy-ticket.yml"
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Verify .env file 
+        run: |
+          if [ -f /home/julian/env-files/ticketing.env ]; then
+            echo ".env file exists and is accessible."
+          else
+            echo ".env file is missing or not accessible."
+            exit 1
+          fi
+
+      - name: Checkout code 
+        uses: actions/checkout@v4
+
+      - name: Build Docker image 
+        run: |
+          IMAGE_NAME=ticketing-system:$(git rev-parse --short "$GITHUB_SHA")
+          # build from the Next.js project directory
+          DOCKER_BUILDKIT=0 docker build \
+            -t $IMAGE_NAME ./ticketing-system
+
+      - name: Stop and remove old container 
+        run: |
+          CONTAINER_NAME=ticketing-system
+          if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+            docker stop $CONTAINER_NAME
+            docker rm $CONTAINER_NAME
+          elif [ "$(docker ps -aq -f name=$CONTAINER_NAME)" ]; then
+            docker rm $CONTAINER_NAME
+          fi
+
+      - name: Deploy new container 
+        run: |
+          IMAGE_NAME=ticketing-system:$(git rev-parse --short "$GITHUB_SHA")
+          CONTAINER_NAME=ticketing-system
+          docker run --env-file /home/julian/env-files/ticketing.env -d \
+            --restart always \
+            -p 1010:80 \
+            --name $CONTAINER_NAME $IMAGE_NAME
+
+      - name: Cleanup old images 
+        run: |
+          docker image prune -f
+          
