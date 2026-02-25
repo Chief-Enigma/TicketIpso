@@ -14,13 +14,7 @@ function nowISO() {
 }
 
 async function seedIfEmpty() {
-  if (process.env.NODE_ENV === "production") {
-    return {
-      ok: false as const,
-      status: 403,
-      body: { error: "Disabled in production" },
-    };
-  }
+
 
   const existingAdmin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
   if (existingAdmin) {
