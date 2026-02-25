@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "ticketing-system/**"
-      - ".github/workflows/deploy-ticket.yml"
+      - ".github/workflows/main.yml"
 
 jobs:
   deploy:
@@ -56,4 +56,3 @@ jobs:
           docker image prune -f
           
 
-          
