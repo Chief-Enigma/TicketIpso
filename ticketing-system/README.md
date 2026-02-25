@@ -1,36 +1,145 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+# Ticketing System
+
+Ein webbasiertes Ticketing-System auf Basis von Next.js, Prisma und MySQL.
+
+---
+
+## Voraussetzungen
+
+- Node.js 18+ oder 20+
+- MySQL 8+
+- npm
+
+Optional für Deployment:
+- Docker
+
+---
+
+## Installation (lokal starten)
+
+1. Repository klonen
+
+```bash
+git clone <REPOSITORY_URL>
+cd ticketing-system
+```
+
+2. Abhängigkeiten installieren
+
+```bash
+npm install
+```
+
+3. `.env` Datei erstellen
+
+Im Root-Verzeichnis eine Datei namens `.env` anlegen mit folgendem Inhalt:
+
+```env
+DATABASE_URL="mysql://appuser:PASSWORT@localhost:3306/ticketing"
+SESSION_SECRET="ein_sehr_langes_zufaelliges_secret"
+```
+
+Erklärung:
+- `DATABASE_URL` → Verbindung zur MySQL-Datenbank
+- `SESSION_SECRET` → Secret für die Session-Verschlüsselung (iron-session)
+
+4. Datenbank vorbereiten
+
+```bash
+npx prisma migrate deploy
+```
+
+Alternativ für Entwicklung:
+
+```bash
+npx prisma migrate dev
+```
+
+5. Entwicklungsserver starten
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Die Anwendung ist danach erreichbar unter:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Initiale Testdaten (optional)
 
-To learn more about Next.js, take a look at the following resources:
+Um Testbenutzer und Tickets zu generieren:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+http://localhost:3000/api/init
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Hinweis:
+Das Seeding wird nur einmal ausgeführt. Falls bereits ein Administrator existiert, wird kein erneutes Seeding durchgeführt.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Produktionsstart
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Build erstellen:
+
+```bash
+npm run build
+```
+
+Produktionsserver starten:
+
+```bash
+npm run start
+```
+
+---
+
+## Deployment mit Docker
+
+Docker Image bauen:
+
+```bash
+docker build -t ticketing-system .
+```
+
+Container starten:
+
+```bash
+docker run -d \
+  --env-file .env \
+  -p 1010:80 \
+  --name ticketing-system \
+  ticketing-system
+```
+
+---
+
+## Wichtige Umgebungsvariablen
+
+- `DATABASE_URL`
+- `SESSION_SECRET`
+- `NODE_ENV` (production / development)
+
+---
+
+## Technologien
+
+- Next.js
+- React
+- Prisma ORM
+- MySQL
+- Vitest (Testing)
+- Docker
+- GitHub Actions (CI/CD)
+
+---
+
+## Lizenz
+
+Dieses Projekt wurde im Rahmen einer Praxisarbeit entwickelt.
